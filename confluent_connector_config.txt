@@ -58,8 +58,7 @@ fact_trade_collections:FACT_TRADE_COLLECTIONS,
 fulfillment_by_type:FULFILLMENT_BY_TYPE,
 inventory_rate_analysis:INVENTORY_RATE_ANALYSIS,
 permissions_property_and_org_admin:PERMISSIONS_PROPERTY_AND_ORG_ADMIN,
-permissions_user_and_org_admin:PERMISSIONS_USER_AND_ORG_ADMIN,
-user_permissions_user_goals:USER_PERMISSIONS_USER_GOALS
+permissions_user_and_org_admin:PERMISSIONS_USER_AND_ORG_ADMIN
 
 ## DATA FORMAT
 Input Kafka record value format: AVRO
@@ -76,7 +75,7 @@ value.converter.decimal.format: NUMERIC
 Error tolerance: none
 
 ## NOTES
-1. All 39 tables included (dim_user_permissions removed - no longer in use)
+1. All 39 tables included
 2. Topics auto-created by Materialize sinks
 3. Schemas auto-registered by Materialize in Schema Registry
 4. Tables auto-created in Snowflake by connector
@@ -165,9 +164,6 @@ UNION ALL
 SELECT 'PERMISSIONS_PROPERTY_AND_ORG_ADMIN', COUNT(*) FROM ANALYTICS.STREAMING.PERMISSIONS_PROPERTY_AND_ORG_ADMIN
 UNION ALL
 SELECT 'PERMISSIONS_USER_AND_ORG_ADMIN', COUNT(*) FROM ANALYTICS.STREAMING.PERMISSIONS_USER_AND_ORG_ADMIN
-UNION ALL
-SELECT 'USER_PERMISSIONS_USER_GOALS', COUNT(*) FROM ANALYTICS.STREAMING.USER_PERMISSIONS_USER_GOALS
-ORDER BY table_name;
 
 -- Verify numeric columns are NUMBER type (not VARCHAR)
 -- Sample check on agreement_revenue table

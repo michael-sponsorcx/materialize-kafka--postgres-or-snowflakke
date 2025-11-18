@@ -701,24 +701,6 @@ SELECT
   admin
 FROM materialize.public_dbt.permissions_user_and_org_admin;
 
--- user_permissions_user_goals
-DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.user_permissions_user_goals_mv CASCADE;
-CREATE MATERIALIZED VIEW materialize.public_dbt.user_permissions_user_goals_mv AS
-SELECT
-  user_id,
-  org_user_id,
-  org_id,
-  email,
-  org_user_email,
-  archived,
-  admin,
-  admin_as_string
-FROM materialize.public_dbt.user_permissions_user_goals;
-
--- user_permissions_user_goals_and_categories (not in original list but adding for completeness)
--- Note: This view was mentioned in the guide but not in the schema dump
--- Skip if it doesn't exist in your schema
-
 -- ============================================================
 -- STEP 2: CREATE KAFKA SINKS
 -- ============================================================
@@ -1110,16 +1092,6 @@ CREATE SINK permissions_user_and_org_admin_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.permissions_user_and_org_admin_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'permissions_user_and_org_admin')
-KEY (user_id, org_id) NOT ENFORCED
-FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
-ENVELOPE UPSERT;
-
--- user_permissions_user_goals
-DROP SINK IF EXISTS user_permissions_user_goals_sink CASCADE;
-CREATE SINK user_permissions_user_goals_sink
-IN CLUSTER quickstart
-FROM materialize.public_dbt.user_permissions_user_goals_mv
-INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'user_permissions_user_goals')
 KEY (user_id, org_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
