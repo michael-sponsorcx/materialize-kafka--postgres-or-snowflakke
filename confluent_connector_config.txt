@@ -1,6 +1,6 @@
 # ============================================================
 # CONFLUENT SNOWFLAKE SINK CONNECTOR CONFIGURATION
-# Single connector handles all 48 topics
+# Single connector handles all 39 topics
 # ============================================================
 
 ## CONNECTOR DETAILS
@@ -20,7 +20,46 @@ Schema name: STREAMING
 
 ## TOPICS TO TABLES MAPPING
 ## Paste this entire string into the "Topics to tables mapping" field:
-activities:ACTIVITIES,activities_by_manager:ACTIVITIES_BY_MANAGER,agreement_revenue:AGREEMENT_REVENUE,contacts:CONTACTS,dim_accounts:DIM_ACCOUNTS,dim_activities:DIM_ACTIVITIES,dim_agreement_inventories:DIM_AGREEMENT_INVENTORIES,dim_agreement_stage_change:DIM_AGREEMENT_STAGE_CHANGE,dim_agreements:DIM_AGREEMENTS,dim_billing_records:DIM_BILLING_RECORDS,dim_fiscal_years:DIM_FISCAL_YEARS,dim_inventory_units:DIM_INVENTORY_UNITS,dim_objective_key_results:DIM_OBJECTIVE_KEY_RESULTS,dim_objectives:DIM_OBJECTIVES,dim_organization_categories:DIM_ORGANIZATION_CATEGORIES,dim_organization_types:DIM_ORGANIZATION_TYPES,dim_organizations:DIM_ORGANIZATIONS,dim_properties:DIM_PROPERTIES,dim_trade:DIM_TRADE,dim_trade_collections:DIM_TRADE_COLLECTIONS,dim_user_permissions:DIM_USER_PERMISSIONS,dim_users:DIM_USERS,expiring_agreements:EXPIRING_AGREEMENTS,fact_agreement_stages:FACT_AGREEMENT_STAGES,fact_agreement_stages_van_wagner:FACT_AGREEMENT_STAGES_VAN_WAGNER,fact_billing:FACT_BILLING,fact_goal_organization:FACT_GOAL_ORGANIZATION,fact_goal_user:FACT_GOAL_USER,fact_inventory:FACT_INVENTORY,fact_inventory_lifecycle:FACT_INVENTORY_LIFECYCLE,fact_objective_key_results:FACT_OBJECTIVE_KEY_RESULTS,fact_objectives:FACT_OBJECTIVES,fact_property_goal:FACT_PROPERTY_GOAL,fact_revenue_first_season:FACT_REVENUE_FIRST_SEASON,fact_trade:FACT_TRADE,fact_trade_collections:FACT_TRADE_COLLECTIONS,fulfillment_by_type:FULFILLMENT_BY_TYPE,inventory_rate_analysis:INVENTORY_RATE_ANALYSIS,permissions_property_and_org_admin:PERMISSIONS_PROPERTY_AND_ORG_ADMIN,permissions_user_and_org_admin:PERMISSIONS_USER_AND_ORG_ADMIN,user_permissions_user_goals:USER_PERMISSIONS_USER_GOALS
+activities:ACTIVITIES,
+activities_by_manager:ACTIVITIES_BY_MANAGER,
+agreement_revenue:AGREEMENT_REVENUE,
+contacts:CONTACTS,
+dim_accounts:DIM_ACCOUNTS,
+dim_activities:DIM_ACTIVITIES,
+dim_agreement_inventories:DIM_AGREEMENT_INVENTORIES,
+dim_agreement_stage_change:DIM_AGREEMENT_STAGE_CHANGE,
+dim_agreements:DIM_AGREEMENTS,
+dim_billing_records:DIM_BILLING_RECORDS,
+dim_fiscal_years:DIM_FISCAL_YEARS,
+dim_inventory_units:DIM_INVENTORY_UNITS,
+dim_objective_key_results:DIM_OBJECTIVE_KEY_RESULTS,
+dim_objectives:DIM_OBJECTIVES,
+dim_organization_categories:DIM_ORGANIZATION_CATEGORIES,
+dim_organization_types:DIM_ORGANIZATION_TYPES,
+dim_organizations:DIM_ORGANIZATIONS,
+dim_properties:DIM_PROPERTIES,
+dim_trade:DIM_TRADE,
+dim_trade_collections:DIM_TRADE_COLLECTIONS,
+dim_users:DIM_USERS,
+expiring_agreements:EXPIRING_AGREEMENTS,
+fact_agreement_stages:FACT_AGREEMENT_STAGES,
+fact_agreement_stages_van_wagner:FACT_AGREEMENT_STAGES_VAN_WAGNER,
+fact_billing:FACT_BILLING,
+fact_goal_organization:FACT_GOAL_ORGANIZATION,
+fact_goal_user:FACT_GOAL_USER,
+fact_inventory:FACT_INVENTORY,
+fact_inventory_lifecycle:FACT_INVENTORY_LIFECYCLE,
+fact_objective_key_results:FACT_OBJECTIVE_KEY_RESULTS,
+fact_objectives:FACT_OBJECTIVES,
+fact_property_goal:FACT_PROPERTY_GOAL,
+fact_revenue_first_season:FACT_REVENUE_FIRST_SEASON,
+fact_trade:FACT_TRADE,
+fact_trade_collections:FACT_TRADE_COLLECTIONS,
+fulfillment_by_type:FULFILLMENT_BY_TYPE,
+inventory_rate_analysis:INVENTORY_RATE_ANALYSIS,
+permissions_property_and_org_admin:PERMISSIONS_PROPERTY_AND_ORG_ADMIN,
+permissions_user_and_org_admin:PERMISSIONS_USER_AND_ORG_ADMIN,
+user_permissions_user_goals:USER_PERMISSIONS_USER_GOALS
 
 ## DATA FORMAT
 Input Kafka record value format: AVRO
@@ -37,7 +76,7 @@ value.converter.decimal.format: NUMERIC
 Error tolerance: none
 
 ## NOTES
-1. All 41 tables included (reduced from original 48 based on actual views in schema)
+1. All 39 tables included (dim_user_permissions removed - no longer in use)
 2. Topics auto-created by Materialize sinks
 3. Schemas auto-registered by Materialize in Schema Registry
 4. Tables auto-created in Snowflake by connector
@@ -88,8 +127,6 @@ UNION ALL
 SELECT 'DIM_TRADE', COUNT(*) FROM ANALYTICS.STREAMING.DIM_TRADE
 UNION ALL
 SELECT 'DIM_TRADE_COLLECTIONS', COUNT(*) FROM ANALYTICS.STREAMING.DIM_TRADE_COLLECTIONS
-UNION ALL
-SELECT 'DIM_USER_PERMISSIONS', COUNT(*) FROM ANALYTICS.STREAMING.DIM_USER_PERMISSIONS
 UNION ALL
 SELECT 'DIM_USERS', COUNT(*) FROM ANALYTICS.STREAMING.DIM_USERS
 UNION ALL

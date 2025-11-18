@@ -348,18 +348,6 @@ SELECT
   type
 FROM materialize.public_dbt.dim_trade_collections;
 
--- dim_user_permissions
-DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.dim_user_permissions_mv CASCADE;
-CREATE MATERIALIZED VIEW materialize.public_dbt.dim_user_permissions_mv AS
-SELECT
-  property_id,
-  org_id,
-  email,
-  archived,
-  admin,
-  property_count
-FROM materialize.public_dbt.dim_user_permissions;
-
 -- dim_users
 DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.dim_users_mv CASCADE;
 CREATE MATERIALIZED VIEW materialize.public_dbt.dim_users_mv AS
@@ -933,16 +921,6 @@ IN CLUSTER quickstart
 FROM materialize.public_dbt.dim_trade_collections_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'dim_trade_collections')
 KEY (id) NOT ENFORCED
-FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
-ENVELOPE UPSERT;
-
--- dim_user_permissions
-DROP SINK IF EXISTS dim_user_permissions_sink CASCADE;
-CREATE SINK dim_user_permissions_sink
-IN CLUSTER quickstart
-FROM materialize.public_dbt.dim_user_permissions_mv
-INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'dim_user_permissions')
-KEY (property_id, org_id, email) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
