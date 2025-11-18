@@ -13,6 +13,7 @@
 -- ============================================================
 -- NOTE: permissions_org, permissions_user, and permissions_nullable_property_and_org_admin
 -- are ALREADY materialized views in the source schema (materialize.public_dbt).
+-- permissions_nullable_property_and_org_admin is not added here because it's nullable.
 -- 
 -- This means we're creating materialized views FROM materialized views, which adds
 -- an extra layer of materialization that may not be optimal for performance.
