@@ -722,7 +722,7 @@ CREATE SINK activities_by_manager_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.activities_by_manager_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'activities_by_manager')
-KEY (activity_id) NOT ENFORCED
+KEY (activity_id, manager_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -742,7 +742,7 @@ CREATE SINK contacts_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.contacts_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'contacts')
-KEY (id) NOT ENFORCED
+KEY (id, property_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -772,7 +772,7 @@ CREATE SINK dim_agreement_inventories_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.dim_agreement_inventories_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'dim_agreement_inventories')
-KEY (id) NOT ENFORCED
+KEY (id, fiscal_year_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -922,7 +922,7 @@ CREATE SINK expiring_agreements_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.expiring_agreements_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'expiring_agreements')
-KEY (unique_key) NOT ENFORCED
+KEY (agreement_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -932,7 +932,7 @@ CREATE SINK fact_agreement_stages_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_agreement_stages_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_agreement_stages')
-KEY (stage_id) NOT ENFORCED
+KEY (stage_id, property_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -942,7 +942,7 @@ CREATE SINK fact_agreement_stages_van_wagner_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_agreement_stages_van_wagner_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_agreement_stages_van_wagner')
-KEY (stage_id) NOT ENFORCED
+KEY (stage_id, agreement_id, property_id, fiscal_year_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -952,7 +952,7 @@ CREATE SINK fact_billing_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_billing_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_billing')
-KEY (billing_record_id) NOT ENFORCED
+KEY (billing_record_id, fiscal_year_id, property_id) NOT ENFORCED  -- Changed from KEY (billing_record_id)
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -982,7 +982,7 @@ CREATE SINK fact_inventory_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_inventory_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_inventory')
-KEY (agreement_inventory_id) NOT ENFORCED
+KEY (agreement_inventory_id, fiscal_year_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -992,7 +992,7 @@ CREATE SINK fact_inventory_lifecycle_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_inventory_lifecycle_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_inventory_lifecycle')
-KEY (agreement_inventory_id) NOT ENFORCED
+KEY (agreement_inventory_id, fiscal_year_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -1002,7 +1002,7 @@ CREATE SINK fact_objective_key_results_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_objective_key_results_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_objective_key_results')
-KEY (id) NOT ENFORCED
+KEY (id, property_id) NOT ENFORCED  -- Changed from KEY (id)
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -1012,7 +1012,7 @@ CREATE SINK fact_objectives_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_objectives_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_objectives')
-KEY (objective_id) NOT ENFORCED
+KEY (objective_id, property_id, service_manager_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -1032,7 +1032,7 @@ CREATE SINK fact_revenue_first_season_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_revenue_first_season_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_revenue_first_season')
-KEY (agreement_id, fiscal_year_id) NOT ENFORCED
+KEY (agreement_id, property_id, fiscal_year_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -1052,7 +1052,7 @@ CREATE SINK fact_trade_collections_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.fact_trade_collections_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_trade_collections')
-KEY (agreement_trade_collections_id) NOT ENFORCED
+KEY (agreement_trade_collections_id, property_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -1072,7 +1072,7 @@ CREATE SINK inventory_rate_analysis_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.inventory_rate_analysis_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'inventory_rate_analysis')
-KEY (id) NOT ENFORCED
+KEY (id, fiscal_year_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
@@ -1082,7 +1082,7 @@ CREATE SINK permissions_property_and_org_admin_sink
 IN CLUSTER quickstart
 FROM materialize.public_dbt.permissions_property_and_org_admin_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'permissions_property_and_org_admin')
-KEY (property_id, org_id, authorized_email) NOT ENFORCED
+KEY (property_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
