@@ -678,6 +678,14 @@ SELECT
   rate_card::NUMERIC(18,2) AS rate_card
 FROM materialize.public_dbt.inventory_rate_analysis;
 
+-- permissions_org
+DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.permissions_org_mv CASCADE;
+CREATE MATERIALIZED VIEW materialize.public_dbt.permissions_org_mv AS
+SELECT
+  org_id,
+  authorized_email
+FROM materialize.public_dbt.permissions_org;
+
 -- permissions_property_and_org_admin
 DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.permissions_property_and_org_admin_mv CASCADE;
 CREATE MATERIALIZED VIEW materialize.public_dbt.permissions_property_and_org_admin_mv AS
@@ -688,6 +696,15 @@ SELECT
   archived,
   admin
 FROM materialize.public_dbt.permissions_property_and_org_admin;
+
+-- permissions_user
+DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.permissions_user_mv CASCADE;
+CREATE MATERIALIZED VIEW materialize.public_dbt.permissions_user_mv AS
+SELECT
+  user_id,
+  org_id,
+  authorized_email
+FROM materialize.public_dbt.permissions_user;
 
 -- permissions_user_and_org_admin
 DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.permissions_user_and_org_admin_mv CASCADE;
@@ -1076,6 +1093,16 @@ KEY (id, fiscal_year_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
+-- permissions_org
+DROP SINK IF EXISTS permissions_org_sink CASCADE;
+CREATE SINK permissions_org_sink
+IN CLUSTER quickstart
+FROM materialize.public_dbt.permissions_org_mv
+INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'permissions_org')
+KEY (org_id, authorized_email) NOT ENFORCED
+FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
+ENVELOPE UPSERT;
+
 -- permissions_property_and_org_admin
 DROP SINK IF EXISTS permissions_property_and_org_admin_sink CASCADE;
 CREATE SINK permissions_property_and_org_admin_sink
@@ -1083,6 +1110,16 @@ IN CLUSTER quickstart
 FROM materialize.public_dbt.permissions_property_and_org_admin_mv
 INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'permissions_property_and_org_admin')
 KEY (property_id) NOT ENFORCED
+FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
+ENVELOPE UPSERT;
+
+-- permissions_user
+DROP SINK IF EXISTS permissions_user_sink CASCADE;
+CREATE SINK permissions_user_sink
+IN CLUSTER quickstart
+FROM materialize.public_dbt.permissions_user_mv
+INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'permissions_user')
+KEY (user_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
 
