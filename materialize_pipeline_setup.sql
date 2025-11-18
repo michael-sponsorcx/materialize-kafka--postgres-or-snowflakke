@@ -9,6 +9,29 @@
 -- 3. Target cluster exists: quickstart
 
 -- ============================================================
+-- PERMISSIONS TABLES - SPECIAL HANDLING REQUIRED
+-- ============================================================
+-- NOTE: permissions_org, permissions_user, and permissions_nullable_property_and_org_admin
+-- are ALREADY materialized views in the source schema (materialize.public_dbt).
+-- 
+-- This means we're creating materialized views FROM materialized views, which adds
+-- an extra layer of materialization that may not be optimal for performance.
+-- 
+-- TODO: When cleaning up the pipeline, consider one of these approaches:
+-- 1. Create sinks directly from the original permissions materialized views
+--    (if Materialize supports this pattern)
+-- 2. Refactor upstream to make permissions tables regular views, then materialize
+--    once at the _mv layer
+-- 3. Evaluate if the permissions tables need to be in Kafka at all, or if they
+--    should be computed differently in the target system
+-- 
+-- Current structure for reference:
+-- Source: materialize.public_dbt.permissions_org (already a materialized view)
+--   → materialize.public_dbt.permissions_org_mv (new materialized view)
+--     → permissions_org_sink (Kafka sink)
+-- ============================================================
+
+-- ============================================================
 -- STEP 1: CREATE MATERIALIZED VIEWS WITH PRECISION CASTING
 -- ============================================================
 
@@ -698,6 +721,7 @@ SELECT
 FROM materialize.public_dbt.permissions_property_and_org_admin;
 
 -- permissions_user
+-- NOTE: See permissions tables note above - this is also a double-materialization
 DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.permissions_user_mv CASCADE;
 CREATE MATERIALIZED VIEW materialize.public_dbt.permissions_user_mv AS
 SELECT
