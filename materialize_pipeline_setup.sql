@@ -422,48 +422,6 @@ SELECT
   gross_of_deal::NUMERIC(18,2) AS gross_of_deal
 FROM materialize.public_dbt.fact_agreement_stages;
 
--- fact_agreement_stages_van_wagner
--- fact_agreement_stages_van_wagner
--- WARNING: Disabled — this materialized view currently uses a "current timestamp" function
--- (or similar non-deterministic CURRENT_* function) in its definition which prevents
--- the view from being safely materialized and used in downstream sinks. Keep this
--- block commented out until the timestamp usage is removed or replaced with a
--- deterministic column. The MV and its sink are therefore temporarily disabled.
--- DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.fact_agreement_stages_van_wagner_mv CASCADE;
--- CREATE MATERIALIZED VIEW materialize.public_dbt.fact_agreement_stages_van_wagner_mv AS
--- SELECT
---   stage_id,
---   agreement_id,
---   user_id,
---   org_id,
---   property_id,
---   account_id,
---   fiscal_year_id,
---   account_manager_id,
---   has_asset,
---   stage_change_date,
---   next_stage_change_date,
---   stage_number,
---   time_spent,
---   percent_time_spent::NUMERIC(18,6) AS percent_time_spent,
---   latest_stage,
---   unit_total::NUMERIC(18,2) AS unit_total,
---   agency_fee::NUMERIC(18,2) AS agency_fee,
---   trade_value::NUMERIC(18,2) AS trade_value,
---   cash_value::NUMERIC(18,2) AS cash_value,
---   hard_costs::NUMERIC(18,2) AS hard_costs,
---   revenue::NUMERIC(18,2) AS revenue,
---   gross_revenue::NUMERIC(18,2) AS gross_revenue,
---   rate_card_total::NUMERIC(18,2) AS rate_card_total,
---   cash_amount::NUMERIC(18,2) AS cash_amount,
---   budget_relief_amount::NUMERIC(18,2) AS budget_relief_amount,
---   campus_cash::NUMERIC(18,2) AS campus_cash,
---   campus_budget_relief::NUMERIC(18,2) AS campus_budget_relief,
---   non_commissioned_barter_amount::NUMERIC(18,2) AS non_commissioned_barter_amount,
---   nil::NUMERIC(18,2) AS nil,
---   unallocated_project_expenses_carve_out::NUMERIC(18,2) AS unallocated_project_expenses_carve_out
--- FROM materialize.public_dbt.fact_agreement_stages_van_wagner;
-
 -- fact_billing
 DROP MATERIALIZED VIEW IF EXISTS materialize.public_dbt.fact_billing_mv CASCADE;
 CREATE MATERIALIZED VIEW materialize.public_dbt.fact_billing_mv AS
@@ -983,20 +941,6 @@ INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_agreeme
 KEY (stage_id, property_id) NOT ENFORCED
 FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
 ENVELOPE UPSERT;
-
--- fact_agreement_stages_van_wagner
--- fact_agreement_stages_van_wagner
--- WARNING: Sink disabled because the upstream materialized view is commented out
--- (see note above). The view uses a current-timestamp function which prevents
--- safe materialization; re-enable both view and sink only after fixing that.
--- DROP SINK IF EXISTS fact_agreement_stages_van_wagner_sink CASCADE;
--- CREATE SINK fact_agreement_stages_van_wagner_sink
--- IN CLUSTER quickstart
--- FROM materialize.public_dbt.fact_agreement_stages_van_wagner_mv
--- INTO KAFKA CONNECTION materialize.public.kafka_connection (TOPIC = 'fact_agreement_stages_van_wagner')
--- KEY (stage_id, agreement_id, property_id, fiscal_year_id) NOT ENFORCED
--- FORMAT AVRO USING CONFLUENT SCHEMA REGISTRY CONNECTION materialize.public.csr_connection
--- ENVELOPE UPSERT;
 
 -- fact_billing
 DROP SINK IF EXISTS fact_billing_sink CASCADE;
